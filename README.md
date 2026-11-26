@@ -1,1 +1,1 @@
-# Online-quiz
+# Online-qiz
