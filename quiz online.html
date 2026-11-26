@@ -1,0 +1,766 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizVerse - Online Quiz</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #141e30, #243b55);
+    color: white;
+    min-height: 100vh;
+    padding: 25px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: rgba(255,255,255,0.09);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 40px;
+    color: #ffd166;
+    margin-bottom: 10px;
+}
+
+header p {
+    color: #ddd;
+}
+
+label {
+    display: block;
+    margin: 15px 0 8px;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.category {
+    padding: 22px 10px;
+    background: rgba(255,255,255,0.12);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.category:hover {
+    transform: translateY(-4px);
+    background: rgba(255,255,255,0.2);
+}
+
+.category.selected {
+    border-color: #ffd166;
+    background: rgba(255,209,102,0.2);
+}
+
+.category .icon {
+    font-size: 35px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+button {
+    border: none;
+    padding: 13px 22px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.primary {
+    background: #ffd166;
+    color: #222;
+}
+
+.primary:hover {
+    background: #ffbd35;
+}
+
+.secondary {
+    background: #64748b;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.full-width {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.quiz-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    color: #ffd166;
+}
+
+.progress-track {
+    height: 9px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.progress {
+    height: 100%;
+    width: 0;
+    background: #ffd166;
+    transition: width 0.3s;
+}
+
+.question {
+    font-size: 23px;
+    line-height: 1.5;
+    margin-bottom: 22px;
+}
+
+.options {
+    display: grid;
+    gap: 12px;
+}
+
+.option {
+    text-align: left;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border: 2px solid transparent;
+    width: 100%;
+}
+
+.option:hover:not(:disabled) {
+    background: rgba(255,255,255,0.22);
+}
+
+.option.correct {
+    border-color: #06d6a0;
+    background: rgba(6,214,160,0.2);
+}
+
+.option.incorrect {
+    border-color: #ef476f;
+    background: rgba(239,71,111,0.2);
+}
+
+.feedback {
+    margin-top: 18px;
+    min-height: 25px;
+    line-height: 1.5;
+}
+
+.quiz-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 25px;
+}
+
+.result {
+    text-align: center;
+}
+
+.result h2 {
+    color: #ffd166;
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border: 7px solid #ffd166;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 25px auto;
+}
+
+.score-circle strong {
+    font-size: 35px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.stat {
+    background: rgba(255,255,255,0.1);
+    padding: 18px 10px;
+    border-radius: 10px;
+}
+
+.stat strong {
+    display: block;
+    font-size: 25px;
+    color: #ffd166;
+    margin-bottom: 6px;
+}
+
+.best-score {
+    margin: 15px 0;
+    color: #ddd;
+}
+
+footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #bbb;
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        padding: 20px;
+        margin: 10px auto;
+    }
+
+    header h1 {
+        font-size: 32px;
+    }
+
+    .question {
+        font-size: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>🌟 QuizVerse</h1>
+        <p>Challenge your knowledge. Learn something new!</p>
+    </header>
+
+    <!-- HOME SCREEN -->
+    <section id="homeScreen">
+        <label for="studentName">Enter Your Name</label>
+        <input id="studentName" type="text" placeholder="Your name">
+
+        <h3 style="margin-top:25px;">Choose Your Quiz Category</h3>
+
+        <div class="categories">
+            <div class="category" data-category="animals">
+                <span class="icon">🐾</span>
+                <strong>Animals</strong>
+            </div>
+
+            <div class="category" data-category="history">
+                <span class="icon">🏛️</span>
+                <strong>Indian History</strong>
+            </div>
+
+            <div class="category" data-category="nation">
+                <span class="icon">🇮🇳</span>
+                <strong>Indian Nation</strong>
+            </div>
+
+            <div class="category" data-category="geography">
+                <span class="icon">🌍</span>
+                <strong>Geography</strong>
+            </div>
+
+            <div class="category" data-category="python">
+                <span class="icon">🐍</span>
+                <strong>Python Programming</strong>
+            </div>
+        </div>
+
+        <button class="primary full-width" id="startBtn">
+            Start Quiz →
+        </button>
+
+        <p id="homeMessage" class="feedback"></p>
+    </section>
+
+    <!-- QUIZ SCREEN -->
+    <section id="quizScreen" class="hidden">
+        <div class="quiz-top">
+            <span id="playerLabel"></span>
+            <span id="questionCounter"></span>
+        </div>
+
+        <div class="progress-track">
+            <div class="progress" id="progressBar"></div>
+        </div>
+
+        <h2 class="question" id="questionText"></h2>
+
+        <div class="options" id="optionsContainer"></div>
+
+        <p class="feedback" id="feedback"></p>
+
+        <div class="quiz-actions">
+            <button class="primary" id="nextBtn" disabled>
+                Next Question →
+            </button>
+        </div>
+
+        <p style="text-align:center; margin-top:20px; color:#ddd;">
+            Your final score will be shown at the end.
+        </p>
+    </section>
+
+    <!-- RESULT SCREEN -->
+    <section id="resultScreen" class="hidden result">
+        <h2>🎉 Quiz Completed!</h2>
+        <p id="resultGreeting"></p>
+
+        <div class="score-circle">
+            <strong id="finalScore">0/20</strong>
+            <span>Final Score</span>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <strong id="correctCount">0</strong>
+                Correct
+            </div>
+
+            <div class="stat">
+                <strong id="wrongCount">0</strong>
+                Incorrect
+            </div>
+
+            <div class="stat">
+                <strong id="percentage">0%</strong>
+                Percentage
+            </div>
+        </div>
+
+        <h3 id="resultMessage"></h3>
+        <p class="best-score" id="bestScore"></p>
+
+        <button class="primary full-width" id="restartBtn">
+            Play Again ↻
+        </button>
+
+        <button class="secondary full-width" id="homeBtn">
+            Back to Home
+        </button>
+    </section>
+
+    <footer>
+        QuizVerse | Learn • Play • Improve
+    </footer>
+</div>
+
+<script>
+// ==================================================
+// QUIZ QUESTIONS: 20 QUESTIONS IN EACH CATEGORY
+// ==================================================
+
+const quizData = {
+    animals: [
+        {q:"Which is the largest land animal?",o:["Lion","African elephant","Giraffe","Tiger"],a:1},
+        {q:"Which animal is known as the King of the Jungle?",o:["Tiger","Elephant","Lion","Leopard"],a:2},
+        {q:"Which is the fastest land animal?",o:["Cheetah","Horse","Lion","Deer"],a:0},
+        {q:"Which animal gives us wool?",o:["Cow","Sheep","Dog","Goat"],a:1},
+        {q:"Which animal is called the ship of the desert?",o:["Horse","Camel","Donkey","Elephant"],a:1},
+        {q:"Which mammal can fly?",o:["Bat","Squirrel","Rabbit","Monkey"],a:0},
+        {q:"What is a baby dog called?",o:["Kitten","Calf","Puppy","Cub"],a:2},
+        {q:"Which animal has black and white stripes?",o:["Zebra","Tiger","Panda","Skunk"],a:0},
+        {q:"Which is the tallest animal in the world?",o:["Elephant","Camel","Giraffe","Ostrich"],a:2},
+        {q:"Which animal is known for changing its colour?",o:["Frog","Chameleon","Snake","Lizard"],a:1},
+        {q:"What is the home of a lion called?",o:["Kennel","Stable","Den","Burrow"],a:2},
+        {q:"Which animal is famous for its long trunk?",o:["Rhino","Elephant","Hippo","Tapir"],a:1},
+        {q:"Which bird is known for its ability to mimic human speech?",o:["Crow","Parrot","Eagle","Swan"],a:1},
+        {q:"Which animal lays eggs?",o:["Cow","Cat","Platypus","Dog"],a:2},
+        {q:"What do pandas mainly eat?",o:["Fish","Bamboo","Grasshoppers","Meat"],a:1},
+        {q:"Which animal is known for building dams?",o:["Otter","Beaver","Fox","Bear"],a:1},
+        {q:"Which is the largest animal in the world?",o:["African elephant","Blue whale","Giraffe","Great white shark"],a:1},
+        {q:"What is a group of fish called?",o:["Pack","Flock","School","Herd"],a:2},
+        {q:"Which insect produces honey?",o:["Ant","Butterfly","Honeybee","Mosquito"],a:2},
+        {q:"Which animal is a marsupial?",o:["Kangaroo","Tiger","Wolf","Horse"],a:0}
+    ],
+
+    history: [
+        {q:"Who was the first Mughal emperor of India?",o:["Akbar","Babur","Humayun","Shah Jahan"],a:1},
+        {q:"Who was known as the Iron Man of India?",o:["Jawaharlal Nehru","Subhas Chandra Bose","Sardar Vallabhbhai Patel","B. R. Ambedkar"],a:2},
+        {q:"When did India gain independence?",o:["1945","1947","1950","1930"],a:1},
+        {q:"Who founded the Maurya Empire?",o:["Ashoka","Chandragupta Maurya","Harsha","Samudragupta"],a:1},
+        {q:"Who built the Taj Mahal?",o:["Akbar","Babur","Shah Jahan","Aurangzeb"],a:2},
+        {q:"Who was the first Prime Minister of India?",o:["Mahatma Gandhi","Sardar Patel","Jawaharlal Nehru","Rajendra Prasad"],a:2},
+        {q:"Who led the Dandi March in 1930?",o:["Bhagat Singh","Mahatma Gandhi","Bal Gangadhar Tilak","Lala Lajpat Rai"],a:1},
+        {q:"Who wrote the Indian national anthem?",o:["Bankim Chandra Chattopadhyay","Rabindranath Tagore","Sarojini Naidu","Premchand"],a:1},
+        {q:"In which year was the Battle of Plassey fought?",o:["1757","1764","1857","1707"],a:0},
+        {q:"Who was the last Mughal emperor?",o:["Akbar II","Bahadur Shah Zafar","Aurangzeb","Shah Alam II"],a:1},
+        {q:"Who founded the Indian National Congress with others in 1885?",o:["A. O. Hume","Mahatma Gandhi","B. R. Ambedkar","Bhagat Singh"],a:0},
+        {q:"Who was popularly known as Netaji?",o:["Subhas Chandra Bose","Bhagat Singh","Lal Bahadur Shastri","Rajendra Prasad"],a:0},
+        {q:"Who was the first woman ruler of the Delhi Sultanate?",o:["Nur Jahan","Razia Sultan","Rani Durgavati","Ahilyabai Holkar"],a:1},
+        {q:"Which movement began in 1942?",o:["Non-Cooperation Movement","Quit India Movement","Swadeshi Movement","Khilafat Movement"],a:1},
+        {q:"Who gave the slogan 'Jai Jawan Jai Kisan'?",o:["Jawaharlal Nehru","Lal Bahadur Shastri","Indira Gandhi","Morarji Desai"],a:1},
+        {q:"Who was the first President of India?",o:["Dr. Rajendra Prasad","Dr. S. Radhakrishnan","Zakir Husain","V. V. Giri"],a:0},
+        {q:"The Jallianwala Bagh massacre took place in which year?",o:["1905","1919","1922","1930"],a:1},
+        {q:"Who was the queen of Jhansi during the Revolt of 1857?",o:["Rani Lakshmibai","Rani Padmini","Rani Durgavati","Begum Hazrat Mahal"],a:0},
+        {q:"Who is traditionally credited with writing the Arthashastra?",o:["Kalidasa","Kautilya","Banabhatta","Tulsidas"],a:1},
+        {q:"Which ancient university was located in present-day Bihar?",o:["Nalanda","Taxila","Vikramashila in present-day Bangladesh","All of these"],a:0}
+    ],
+
+    nation: [
+        {q:"What is the capital of India?",o:["Mumbai","New Delhi","Kolkata","Chennai"],a:1},
+        {q:"What is the national animal of India?",o:["Lion","Bengal tiger","Elephant","Leopard"],a:1},
+        {q:"What is the national bird of India?",o:["Parrot","Peacock","Eagle","Swan"],a:1},
+        {q:"What is the national flower of India?",o:["Rose","Lotus","Sunflower","Jasmine"],a:1},
+        {q:"What is the currency of India?",o:["Dollar","Taka","Rupee","Yen"],a:2},
+        {q:"How many colours are there in the Indian national flag?",o:["Two","Three","Four","Five"],a:1},
+        {q:"What is the national anthem of India?",o:["Vande Mataram","Jana Gana Mana","Saare Jahan Se Achha","Ae Mere Watan"],a:1},
+        {q:"Who designed the Indian national flag in its commonly recognized form?",o:["Pingali Venkayya","Rabindranath Tagore","Mahatma Gandhi","B. R. Ambedkar"],a:0},
+        {q:"When is Republic Day celebrated in India?",o:["15 August","26 January","2 October","14 November"],a:1},
+        {q:"When is Independence Day celebrated in India?",o:["26 January","15 August","1 May","2 October"],a:1},
+        {q:"What is the national aquatic animal of India?",o:["Blue whale","Ganges river dolphin","Crocodile","Sea turtle"],a:1},
+        {q:"Which is the upper house of the Indian Parliament?",o:["Lok Sabha","Rajya Sabha","Vidhan Sabha","Gram Sabha"],a:1},
+        {q:"What is the minimum voting age in India?",o:["16 years","18 years","21 years","25 years"],a:1},
+        {q:"Who is the constitutional head of the Indian Union?",o:["Prime Minister","President","Chief Justice","Speaker"],a:1},
+        {q:"Which document is the supreme law of India?",o:["Indian Penal Code","Constitution of India","Election Manifesto","Parliamentary Rules"],a:1},
+        {q:"Which city is known as the Pink City of India?",o:["Jaipur","Jodhpur","Udaipur","Bhopal"],a:0},
+        {q:"Which is the national tree of India?",o:["Neem","Banyan","Mango","Peepal"],a:1},
+        {q:"Which is the national fruit of India?",o:["Apple","Mango","Banana","Guava"],a:1},
+        {q:"Who was the chairman of the Drafting Committee of the Indian Constitution?",o:["Jawaharlal Nehru","B. R. Ambedkar","Rajendra Prasad","Sardar Patel"],a:1},
+        {q:"Which Indian institution conducts national elections?",o:["Supreme Court","Election Commission of India","RBI","UPSC"],a:1}
+    ],
+
+    geography: [
+        {q:"Which is the largest continent?",o:["Africa","Asia","Europe","North America"],a:1},
+        {q:"Which is the longest river in India?",o:["Yamuna","Ganga","Godavari","Narmada"],a:1},
+        {q:"Which is the highest mountain in the world?",o:["K2","Mount Everest","Kangchenjunga","Makalu"],a:1},
+        {q:"Which is the largest ocean?",o:["Atlantic Ocean","Indian Ocean","Pacific Ocean","Arctic Ocean"],a:2},
+        {q:"Which desert is located in Rajasthan?",o:["Sahara","Gobi","Thar","Kalahari"],a:2},
+        {q:"What is the capital of West Bengal?",o:["Siliguri","Kolkata","Durgapur","Howrah"],a:1},
+        {q:"Which planet is known as the Red Planet?",o:["Venus","Mars","Jupiter","Mercury"],a:1},
+        {q:"Which imaginary line divides Earth into Northern and Southern Hemispheres?",o:["Tropic of Cancer","Equator","Prime Meridian","Arctic Circle"],a:1},
+        {q:"Which country has the largest population as of recent estimates?",o:["India","United States","Russia","Japan"],a:0},
+        {q:"Which is the smallest continent by land area?",o:["Europe","Antarctica","Australia","South America"],a:2},
+        {q:"Which river flows through Egypt?",o:["Amazon","Nile","Danube","Mississippi"],a:1},
+        {q:"Which Indian state is famous for its backwaters?",o:["Kerala","Punjab","Haryana","Bihar"],a:0},
+        {q:"Which is the largest hot desert in the world?",o:["Thar","Sahara","Gobi","Arabian Desert"],a:1},
+        {q:"Which strait separates India and Sri Lanka?",o:["Bering Strait","Palk Strait","Malacca Strait","Gibraltar Strait"],a:1},
+        {q:"Which country is called the Land of the Rising Sun?",o:["China","Japan","Thailand","South Korea"],a:1},
+        {q:"What is the capital of Australia?",o:["Sydney","Melbourne","Canberra","Perth"],a:2},
+        {q:"Which is the largest state in India by area?",o:["Madhya Pradesh","Maharashtra","Rajasthan","Uttar Pradesh"],a:2},
+        {q:"Which Indian state has the longest coastline?",o:["Tamil Nadu","Gujarat","Kerala","Odisha"],a:1},
+        {q:"Which layer of Earth is the outermost solid layer?",o:["Core","Mantle","Crust","Outer core"],a:2},
+        {q:"Which mountain range contains Mount Everest?",o:["Andes","Alps","Himalayas","Rockies"],a:2}
+    ],
+
+    python: [
+        {q:"Who created Python?",o:["James Gosling","Guido van Rossum","Dennis Ritchie","Bjarne Stroustrup"],a:1},
+        {q:"Which symbol is used for comments in Python?",o:["//","#","<!--","**"],a:1},
+        {q:"Which function displays output in Python?",o:["show()","display()","print()","output()"],a:2},
+        {q:"Which data type stores True or False?",o:["int","str","bool","list"],a:2},
+        {q:"Which brackets are used to create a list?",o:["{}","[]","()","<>"],a:1},
+        {q:"Which keyword defines a function in Python?",o:["function","define","def","fun"],a:2},
+        {q:"What is the output of print(2 + 3)?",o:["23","5","2+3","Error"],a:1},
+        {q:"Which operator is used for exponentiation?",o:["^","**","//","%"],a:1},
+        {q:"Which keyword starts a conditional statement?",o:["when","if","check","case"],a:1},
+        {q:"Which loop iterates over a sequence?",o:["repeat","for","loop","iterate"],a:1},
+        {q:"Which function returns the length of a list?",o:["size()","count()","len()","length()"],a:2},
+        {q:"Which data type stores key-value pairs?",o:["list","tuple","dictionary","set"],a:2},
+        {q:"Which keyword is used to handle exceptions?",o:["catch","error","try","handle"],a:2},
+        {q:"What is the result of 10 // 3 in Python?",o:["3.33","3","1","4"],a:1},
+        {q:"Which method adds an item to the end of a list?",o:["add()","append()","insertEnd()","push()"],a:1},
+        {q:"Which keyword imports a module?",o:["include","using","import","require"],a:2},
+        {q:"What is the output of len('Python')?",o:["5","6","7","Error"],a:1},
+        {q:"Which value represents no value in Python?",o:["null","undefined","None","empty"],a:2},
+        {q:"Which statement exits a loop immediately?",o:["stop","exit","break","continue"],a:2},
+        {q:"Which file extension is commonly used for Python files?",o:[".java",".py",".html",".cpp"],a:1}
+    ]
+};
+
+// ==================================================
+// APPLICATION STATE
+// ==================================================
+
+let selectedCategory = "";
+let playerName = "";
+let questions = [];
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+const homeScreen = document.getElementById("homeScreen");
+const quizScreen = document.getElementById("quizScreen");
+const resultScreen = document.getElementById("resultScreen");
+
+// ==================================================
+// CATEGORY SELECTION
+// ==================================================
+
+document.querySelectorAll(".category").forEach(card => {
+    card.addEventListener("click", () => {
+        document.querySelectorAll(".category").forEach(item => {
+            item.classList.remove("selected");
+        });
+
+        card.classList.add("selected");
+        selectedCategory = card.dataset.category;
+        document.getElementById("homeMessage").textContent = "";
+    });
+});
+
+// ==================================================
+// START QUIZ
+// ==================================================
+
+document.getElementById("startBtn").addEventListener("click", () => {
+    playerName = document.getElementById("studentName").value.trim();
+
+    if (!playerName) {
+        document.getElementById("homeMessage").textContent =
+            "Please enter your name first.";
+        return;
+    }
+
+    if (!selectedCategory) {
+        document.getElementById("homeMessage").textContent =
+            "Please select a quiz category.";
+        return;
+    }
+
+    questions = [...quizData[selectedCategory]];
+    currentQuestion = 0;
+    score = 0;
+
+    homeScreen.classList.add("hidden");
+    resultScreen.classList.add("hidden");
+    quizScreen.classList.remove("hidden");
+
+    document.getElementById("playerLabel").textContent =
+        "Player: " + playerName;
+
+    showQuestion();
+});
+
+// ==================================================
+// DISPLAY QUESTION
+// ==================================================
+
+function showQuestion() {
+    answered = false;
+
+    const question = questions[currentQuestion];
+
+    document.getElementById("questionCounter").textContent =
+        `Question ${currentQuestion + 1} of ${questions.length}`;
+
+    document.getElementById("progressBar").style.width =
+        `${(currentQuestion / questions.length) * 100}%`;
+
+    document.getElementById("questionText").textContent = question.q;
+
+    const optionsContainer = document.getElementById("optionsContainer");
+    optionsContainer.innerHTML = "";
+
+    document.getElementById("feedback").textContent = "";
+
+    question.o.forEach((option, index) => {
+        const button = document.createElement("button");
+
+        button.className = "option";
+        button.textContent =
+            `${String.fromCharCode(65 + index)}. ${option}`;
+
+        button.addEventListener("click", () => {
+            checkAnswer(index);
+        });
+
+        optionsContainer.appendChild(button);
+    });
+
+    const nextBtn = document.getElementById("nextBtn");
+    nextBtn.disabled = true;
+
+    nextBtn.textContent =
+        currentQuestion === questions.length - 1
+            ? "See Results →"
+            : "Next Question →";
+}
+
+// ==================================================
+// CHECK ANSWER
+// ==================================================
+
+function checkAnswer(selectedIndex) {
+    if (answered) return;
+
+    answered = true;
+
+    const question = questions[currentQuestion];
+    const optionButtons = document.querySelectorAll(".option");
+
+    optionButtons.forEach(button => {
+        button.disabled = true;
+    });
+
+    optionButtons[question.a].classList.add("correct");
+
+    const feedback = document.getElementById("feedback");
+
+    if (selectedIndex === question.a) {
+        score++;
+
+        feedback.textContent = "✓ Correct answer!";
+        feedback.style.color = "#06d6a0";
+    } else {
+        optionButtons[selectedIndex].classList.add("incorrect");
+
+        feedback.textContent =
+            "✗ Incorrect. Correct answer: " + question.o[question.a];
+
+        feedback.style.color = "#ff9aa2";
+    }
+
+    document.getElementById("progressBar").style.width =
+        `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+    document.getElementById("nextBtn").disabled = false;
+}
+
+// ==================================================
+// NEXT QUESTION
+// ==================================================
+
+document.getElementById("nextBtn").addEventListener("click", () => {
+    if (!answered) return;
+
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+        showQuestion();
+    } else {
+        showResults();
+    }
+});
+
+// ==================================================
+// DISPLAY FINAL RESULTS
+// ==================================================
+
+function showResults() {
+    quizScreen.classList.add("hidden");
+    resultScreen.classList.remove("hidden");
+
+    const total = questions.length;
+    const wrong = total - score;
+    const percent = Math.round((score / total) * 100);
+
+    document.getElementById("resultGreeting").textContent =
+        `Well done, ${playerName}! Here are your results.`;
+
+    document.getElementById("finalScore").textContent =
+        `${score}/${total}`;
+
+    document.getElementById("correctCount").textContent = score;
+    document.getElementById("wrongCount").textContent = wrong;
+    document.getElementById("percentage").textContent = percent + "%";
+
+    let message = "";
+
+    if (percent >= 90) {
+        message = "Excellent! Outstanding performance! 🏆";
+    } else if (percent >= 75) {
+        message = "Great job! Keep learning! 🌟";
+    } else if (percent >= 50) {
+        message = "Good effort! You can improve even more. 👍";
+    } else {
+        message = "Keep practising. Every attempt helps you learn! 💪";
+    }
+
+    document.getElementById("resultMessage").textContent = message;
+
+    // Save the best score for this category in localStorage.
+    const storageKey = "quizverse_best_" + selectedCategory;
+    const previousBest = Number(localStorage.getItem(storageKey) || 0);
+    const newBest = Math.max(previousBest, score);
+
+    localStorage.setItem(storageKey, newBest);
+
+    document.getElementById("bestScore").textContent =
+        `Your best score in this category: ${newBest}/${total}`;
+}
+
+// ==================================================
+// RESTART QUIZ
+// ==================================================
+
+document.getElementById("restartBtn").addEventListener("click", () => {
+    questions = [...quizData[selectedCategory]];
+    currentQuestion = 0;
+    score = 0;
+
+    resultScreen.classList.add("hidden");
+    quizScreen.classList.remove("hidden");
+
+    showQuestion();
+});
+
+// ==================================================
+// RETURN HOME
+// ==================================================
+
+document.getElementById("homeBtn").addEventListener("click", () => {
+    resultScreen.classList.add("hidden");
+    quizScreen.classList.add("hidden");
+    homeScreen.classList.remove("hidden");
+
+    document.getElementById("homeMessage").textContent = "";
+});
+</script>
+
+</body>
+</html>
+```
